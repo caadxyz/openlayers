@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="http://maps.google.com/maps/api/js?v=3.6&amp;sensor=false"></script>
+    <script src="http://openlayers.org/dev/OpenLayers.js"></script>
+    <script type="text/javascript">
+        var lon = 90,
+            lat = 60,
+            zoom = 3,
+            epsg4326 = new OpenLayers.Projection('EPSG:4326'),
+            epsg900913 = new OpenLayers.Projection('EPSG:900913');
+        var map;
+        function init(){
+             map= new OpenLayers.Map('map-id', {
+                units: 'm',
+                numZoomLevels: 19,
+                controls: [
+                    new OpenLayers.Control.Navigation(),
+                    new OpenLayers.Control.ScaleLine(),
+                    new OpenLayers.Control.MousePosition(),
+                    new OpenLayers.Control.LayerSwitcher()
+                ],
+                projection: epsg900913,
+                displayProjection: epsg4326 //Is used for displaying coordinates in appropriate CRS by MousePosition control
+            });
+
+            var lay_goo = new OpenLayers.Layer.Google('Google', {
+                type: google.maps.MapTypeId.SATELLITE,
+                sphericalMercator: true
+            });
+
+            var lay_osm = new OpenLayers.Layer.Google('OSM');
+            geojson_layer = new OpenLayers.Layer.Vector("KML");
+            /*
+            geojson_layer = new OpenLayers.Layer.Vector("KML", {
+                projection: epsg4326,
+                strategies: [new OpenLayers.Strategy.Fixed()],
+                protocol: new OpenLayers.Protocol.HTTP({
+                    url: "img/1.0_week_age.kml",
+                    format: new OpenLayers.Format.KML()
+                })
+            });
+            */
+            
+            map.addLayers([lay_osm, lay_goo, geojson_layer]);
+            
+            map.addControl(new OpenLayers.Control.EditingToolbar(geojson_layer));
+
+            map.setCenter(new OpenLayers.LonLat(lon, lat).transform(epsg4326, epsg900913), zoom);
+            
+            
+            
+        }
+    </script>
+  </head>
+  <body onload="init()">
+    <div id="map-id" style="position: absolute; right: 0px; top: 0px; width: 100%; height: 100%"></div>
+  </body>
+</html>
+

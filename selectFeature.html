@@ -1,0 +1,105 @@
+<html>
+<head>
+  <title>OpenLayers Example</title>
+    <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    </head>
+    <body>
+      <div style="width:100%; height:80%" id="map"></div>
+      <div id='map_feature_log'></div>
+      
+      <script defer="defer" type="text/javascript">
+        var map = new OpenLayers.Map('map');
+        var wms = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+            "http://vmap0.tiles.osgeo.org/wms/vmap0", {layers: 'basic'} );
+      
+        map.addLayer(wms);
+        
+        var vector_layer;
+        vector_layer=new OpenLayers.Layer.Vector('Basci Vector Layer');
+        map.addLayer(vector_layer);
+        
+        var feature_point_1=new OpenLayers.Feature.Vector(
+        		new OpenLayers.Geometry.Point(6.055,46.234),
+        		{
+        		'location':'Cern',
+        		'description':"Stand back, I'm going to try science!"
+        		});
+        
+        var feature_point_2=new OpenLayers.Feature.Vector(
+        		new OpenLayers.Geometry.Point(-129,3),
+        		{
+        		'location':'The Sea',
+        		'description':"Here be dragons"
+        		});
+        
+        var feature_polygon=new OpenLayers.Feature.Vector(
+        		new OpenLayers.Geometry.Polygon(new OpenLayers.Geometry.LinearRing(
+        				[
+                             new OpenLayers.Geometry.Point(-124.2,41.9),
+                             new OpenLayers.Geometry.Point(-120.1,41.9),
+                             new OpenLayers.Geometry.Point(-120,39),
+                             new OpenLayers.Geometry.Point(-114.7,34.9),
+        				 ])),
+        		{
+        		'location':'Fanghorn Forest',
+        		'description':"Land of the Ents"
+        		});
+        
+        vector_layer.addFeatures([feature_point_1,feature_point_2,feature_polygon]);
+        
+        var select_feature_control=new OpenLayers.Control.SelectFeature(
+            vector_layer,
+            {
+            	multiple:false,
+            	toggle:true,
+            	multipleKey:'shiftKey'
+            }
+        );
+        map.addControl(select_feature_control);
+        select_feature_control.activate();
+        
+        function selected_feature(event){
+        	//clear out the log's contents
+        	document.getElementById('map_feature_log').innerHTML='';
+        	//show the current selected feature(passed in from the event object)
+        	var display_text='clicked on:'
+        	+'<strong>'+event.feature.attributes.location+'</strong>'
+        	+':'+event.feature.attributes.description+'<br/>';
+        	document.getElementById('map_feature_log').innerHTML=display_text;
+        	
+        	//show all selected features
+        	document.getElementById('map_feature_log').innerHTML+='All selected features:';
+        	
+        	//now, loop through the selected feature array
+        	for(var i=0; i<vector_layer.selectedFeatures.length; i++){
+        		document.getElementById('map_feature_log').innerHTML+=
+        			vector_layer.selectedFeatures[i].attributes.location+'|';
+        	}
+        	
+        }
+        
+        function unselected_feature(event){
+        	var display_text=event.feature.attributes.location+' unselected!'+'<br/>'
+        	
+        	document.getElementById('map_feature_log').innerHTML=display_text;
+        	
+        	
+        	//show all selected features
+        	document.getElementById('map_feature_log').innerHTML+='All selected features:';
+        	
+        	//now, loop through the selected feature array
+        	for(var i=0; i<vector_layer.selectedFeatures.length; i++){
+        		document.getElementById('map_feature_log').innerHTML+=
+        			vector_layer.selectedFeatures[i].attributes.location+'|';
+        	}
+        	
+        }
+        
+        vector_layer.events.register('featureselected',this,selected_feature);
+        vector_layer.events.register('featureunselected',this,unselected_feature);
+        
+        map.zoomToMaxExtent();
+      </script>
+
+</body>
+</html>
