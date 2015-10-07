@@ -12,22 +12,12 @@
     <title>OpenLayers 3 example</title>
 </head>
 <body>
-<h2>My Map</h2>
-<div id="map" class="map"></div>
-<script type="text/javascript">
-    var map = new ol.Map({
-        target: 'map',
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.MapQuest({layer: 'sat'})
-            })
-        ],
-        view: new ol.View({
-            center: ol.proj.transform([37.41, 8.82], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 4
-        })
-    });
-</script>
+<ul>
+    <li><a href="ol3/index.html">ol3</a></li>
+    <li><a href="geoserver_ol2/index.html">geoserver + openLayer2</a></li>
+    <li><a href="aMap/index.html">高德地图</a></li>
+
+</ul>
 </body>
 </html>
 
